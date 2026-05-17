@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "http://localhost:4200"
+                allowedHeaders: "*"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                allowCredentials: true
+          routes:
+            - id: ms-producto
+              uri: lb://ms-producto
+              predicates:
+                - Path=/api/productos/**
+            - id: ms-pago
+              uri: lb://ms-pago
+              predicates:
+                - Path=/api/pagos/**,/api/descuentos/**
+            - id: ms-pedido
+              uri: lb://ms-pedido
+              predicates:
+                - Path=/api/pedidos/**
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
